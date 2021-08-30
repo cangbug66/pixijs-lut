@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>滤镜demo</title>
+</head>
+<script src="./js/pixi.min.v6.0.4.js"></script>
+<script src="./shader/shader.js"></script>
+<body>
+    <canvas></canvas>
+</div>
+</body>
+<script type="text/javascript">
+    const canvasDom = document.querySelector("canvas")
+    const mainApp = new PIXI.Application({width:800, height:800, view:canvasDom});
+
+    const videoSrc = './video/demo.mp4'
+    const videoTexture = PIXI.Texture.from(videoSrc);
+    var videoSprite = new PIXI.Sprite(videoTexture);
+
+    videoSprite.x = 10;
+    videoSprite.y = 10;
+    videoSprite.width = 640;
+    videoSprite.height = 480;
+
+    var zaochun_texture = PIXI.Texture.from('./lut/早春.png');
+    zaochun_texture.baseTexture.mipmap = false;//关闭纹理过滤方式，防止花屏
+
+    var uniforms = {
+        uSampler:videoTexture,
+        lut: zaochun_texture,
+    }
+    const customfilter = new PIXI.Filter(
+        VertexShader,
+        FragmentShader,
+        uniforms
+    )
+    videoSprite.filters = [customfilter]
+
+
+    mainApp.stage.addChild(videoSprite)
+    mainApp.start()
+</script>
+</html>
